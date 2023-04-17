@@ -58,19 +58,10 @@ class StartStopTrait(_StartStopTrait):
                 else:
                     zones.append(params["zone"])
                 #setup zones
-                zoneIds = []
+                _LOGGER.info(params)
                 config = self.hass.data[DOMAIN]['CONFIG']
                 for key, matchingConfig in config['zones'].items():
                     if key in zones:
-                        if 'set_clean_motor_mode' in matchingConfig:
-                            _LOGGER.info(matchingConfig['set_clean_motor_mode'])
-                            await self.hass.services.async_call(
-                                'vacuum', 'send_command', {
-                                    'entity_id': self.state.entity_id,
-                                    'command': 'set_clean_motor_mode',
-                                    'params': matchingConfig['set_clean_motor_mode'],
-                                }, blocking=True)
-
                         if 'room' in matchingConfig:
                             await self.hass.services.async_call(
                                 'xiaomi_miio', 'vacuum_clean_segment', {
@@ -93,6 +84,14 @@ class StartStopTrait(_StartStopTrait):
                                     'x_coord': matchingConfig['goto'][0],
                                     'y_coord': matchingConfig['goto'][1],
                                 }, blocking=True)
+
+                        if 'set_clean_motor_mode' in matchingConfig:
+                            await self.hass.services.async_call(
+                                'vacuum', 'send_command', {
+                                    'entity_id': self.state.entity_id,
+                                    'command': 'set_clean_motor_mode',
+                                    'params': matchingConfig['set_clean_motor_mode'],
+                                }, blocking=False)
                         break
 
 

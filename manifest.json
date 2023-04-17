@@ -1,0 +1,11 @@
+{
+    "domain": "vacuum-assistant-zones",
+    "name": "Vacuum Google Assistant Zones",
+    "documentation": "https://github.com/",
+    "dependencies": [],
+    "codeowners": [],
+    "requirements": [],
+    "version": "1.0.0",
+    "iot_class": "assumed_state"
+  }
+  

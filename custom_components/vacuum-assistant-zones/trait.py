@@ -60,20 +60,40 @@ class StartStopTrait(_StartStopTrait):
                 #setup zones
                 zoneIds = []
                 config = self.hass.data[DOMAIN]['CONFIG']
-                for key, value in config['zones'].items():
+                for key, matchingConfig in config['zones'].items():
                     if key in zones:
-                        for key, value in value.items():
-                            zoneIds.append(value)
-                if len(zoneIds) > 0:
-                    return await self.hass.services.async_call(
-                            'xiaomi_miio',
-                            'vacuum_clean_segment',
-                            {
-                                ATTR_ENTITY_ID: self.state.entity_id,
-                                'segments': zoneIds
-                            },
-                            blocking=True,
-                            context=data.context,
-                    )
+                        if 'set_clean_motor_mode' in matchingConfig:
+                            _LOGGER.info(matchingConfig['set_clean_motor_mode'])
+                            await self.hass.services.async_call(
+                                'vacuum', 'send_command', {
+                                    'entity_id': self.state.entity_id,
+                                    'command': 'set_clean_motor_mode',
+                                    'params': matchingConfig['set_clean_motor_mode'],
+                                }, blocking=True)
+
+                        if 'room' in matchingConfig:
+                            await self.hass.services.async_call(
+                                'xiaomi_miio', 'vacuum_clean_segment', {
+                                    'entity_id': self.state.entity_id,
+                                    'segments': matchingConfig['room'],
+                                }, blocking=True)
+
+                        elif 'zone' in matchingConfig:
+                            await self.hass.services.async_call(
+                                'xiaomi_miio', 'vacuum_clean_zone', {
+                                    'entity_id': self.state.entity_id,
+                                    'zone': matchingConfig['zone'],
+                                    'repeats': matchingConfig.get('repeats', 1)
+                                }, blocking=True)
+
+                        elif 'goto' in matchingConfig:
+                            await self.hass.services.async_call(
+                                'xiaomi_miio', 'vacuum_goto', {
+                                    'entity_id': self.state.entity_id,
+                                    'x_coord': matchingConfig['goto'][0],
+                                    'y_coord': matchingConfig['goto'][1],
+                                }, blocking=True)
+                        break
+
 
         return super().execute(command, data, params, challenge)

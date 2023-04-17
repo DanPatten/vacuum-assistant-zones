@@ -17,20 +17,20 @@ from .const import (
 
 from . import trait
 
-CONFIG_SCHEMA = vol.Schema({
-    DOMAIN: vol.Schema({
-        vol.Required(CONF_ENTITY_ID): cv.entity_id,
-        vol.Required('zones'): {
-            cv.string: vol.Schema({
-                vol.Optional('room'): vol.Any(list, int),
-                vol.Optional('zone'): list,
-                vol.Optional('repeats'): int,
-                vol.Optional('goto'): list,
-                vol.Optional(CONF_SEQUENCE): cv.SCRIPT_SCHEMA
-            })
-        }
-    })
-}, extra=vol.ALLOW_EXTRA)
+# CONFIG_SCHEMA = vol.Schema({
+#     DOMAIN: vol.Schema({
+#         vol.Required(CONF_ENTITY_ID): cv.entity_id,
+#         vol.Required('zones'): {
+#             cv.string: vol.Schema({
+#                 vol.Optional('room'): vol.Any(list, int),
+#                 vol.Optional('zone'): list,
+#                 vol.Optional('repeats'): int,
+#                 vol.Optional('goto'): list,
+#                 vol.Optional('set_clean_motor_mode'): vol.Any()
+#             })
+#         }
+#     })
+# }, extra=vol.ALLOW_EXTRA)
 
 _LOGGER = logging.getLogger(__name__)
 
